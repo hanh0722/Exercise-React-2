@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+import React, { useState } from "react";
+import Background from "./components/Background/Background";
+import FormAdd from "./components/FormAdd/FormAdd";
+import Information from "./components/Information/Information";
+import ValidateUser from "./components/ValidateUser/ValidateUser";
+const App = () => {
+  const [users, setUsers] = useState([]);
+  const [validateName, setValidateName] = useState(true);
+  const [validateAge, setValidateAge] = useState(true);
+  const setUser = (user) => {
+    // check name
+    if (user.name === "") {
+      setValidateName(false);
+    }
+    // check age
+    if (
+      user.age === "" ||
+      user.age <= 0
+    ) {
+      setValidateAge(false);
+    }
+    if((user.name !== "") &&  user.age > 0){
+      setUsers((prevState) => {
+        return [...prevState, user];
+      });
+    } 
+  };
+  const setValidateHandler = () => {
+    setValidateAge(true);
+    setValidateName(true);
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Background>
+      <FormAdd onSetUser={setUser} />
+      {(validateName === false || validateAge === false) && (
+        <ValidateUser
+          name={validateName}
+          age={validateAge}
+          changeHandler={setValidateHandler}
+        />
+      )}
+      {users.length !== 0 && <Information renderUsers={users} />}
+    </Background>
   );
-}
+};
 
 export default App;
